@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clish Photos — Event Packages</title>
+<style>
+:root{--bg:#080809;--panel:#141416;--line:#29292d;--ink:#f3efe7;--muted:#a39e95;--gold:#e7c468;--silver:#d7dbe2;--copper:#c1783d}
+*{box-sizing:border-box}body{margin:0;background:#050506;color:var(--ink);font-family:Arial,sans-serif}.wrap{max-width:1050px;margin:auto;padding:24px}
+header{padding:24px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;align-items:center}.brand{font-family:Georgia,serif;font-size:30px}.tag{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-top:5px}
+.hero{text-align:center;padding:55px 10px 35px}.hero small{color:var(--gold);letter-spacing:4px;text-transform:uppercase}.hero h1{font:italic 56px Georgia,serif;margin:15px 0}.hero p{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}.card{background:linear-gradient(145deg,#171719,#101012);border:1px solid var(--line);padding:25px;border-radius:12px}.card h2{font:700 30px Georgia,serif;margin:0 0 6px}.sub{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:1px}.price{font:700 28px Georgia,serif;color:var(--gold);margin:18px 0}.old{text-decoration:line-through;color:#777;font:14px Arial;margin-right:8px}.features{padding-left:18px;color:#ddd;line-height:1.7;font-size:14px}.btn{border:0;background:var(--gold);color:#15120b;padding:13px 18px;border-radius:6px;font-weight:700;cursor:pointer}.btn.secondary{background:#242427;color:#fff}.notes{margin-top:30px;padding:24px;border-top:1px solid var(--line);color:var(--muted);line-height:1.7;font-size:13px}
+.modal{display:none;position:fixed;inset:0;background:#000b;z-index:5;padding:20px;overflow:auto}.modal.show{display:block}.box{max-width:700px;margin:30px auto;background:#121214;border:1px solid var(--line);border-radius:12px;padding:28px}.box h2{font:30px Georgia,serif}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:650px){.formgrid{grid-template-columns:1fr}.hero h1{font-size:42px}}label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}input,textarea,select{width:100%;padding:12px;background:#09090a;color:#fff;border:1px solid #333;border-radius:6px}textarea{min-height:80px}.field{margin-bottom:14px}.bank{background:#0b0b0c;border:1px solid #39332a;padding:18px;border-radius:8px;margin:16px 0}.bank strong{color:var(--gold)}.success{text-align:center;padding:30px}.receipt{background:#fff;color:#111;padding:30px;max-width:700px;margin:auto}.receipt h1{font-family:Georgia,serif}.receipt table{width:100%;border-collapse:collapse}.receipt td{padding:9px;border-bottom:1px solid #ddd}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div><div class="brand">Clish Photos</div><div class="tag">Everyone is beautiful behind our lens</div></div><button class="btn secondary" onclick="openAdmin()">Admin</button></header>
+<section class="hero"><small>Wedding Photography & Film</small><h1>Our Event Packages</h1><p>Choose the package that fits your celebration.</p></section>
+<div id="packages" class="grid"></div>
+<div class="notes"><b style="color:#e7c468">Please Note</b><br>80% part payment must be made before the pre-wedding shoot, for any package, with receipt sent.<br>Pre-wedding pictures must be taken three weeks to the date of the event.<br>Extra photographer, videographer, and drone coverage is discussed separately.</div>
+</div>
+
+<div id="booking" class="modal"><div class="box"><button class="btn secondary" onclick="closeModal('booking')">Close</button><h2>Book Your Package</h2><div id="selected"></div>
+<div class="formgrid">
+<div class="field"><label>Full Name *</label><input id="name"></div><div class="field"><label>Phone *</label><input id="phone"></div>
+<div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Event Date *</label><input id="date" type="date"></div>
+</div><div class="field"><label>Event Location *</label><input id="location"></div>
+<div class="bank"><b>Transfer Payment</b><p>Bank: <strong>PALMPAY</strong><br>Account Name: <strong>EDIOMO EDDY EDUOK</strong><br>Account Number: <strong>7016040813</strong></p><small>After transferring, enter your transfer details below. Your receipt will remain pending until Clish Photos verifies the payment.</small></div>
+<div class="formgrid"><div class="field"><label>Amount Transferred</label><input id="paid" type="number"></div><div class="field"><label>Transfer Date</label><input id="paydate" type="date"></div></div>
+<div class="field"><label>Upload Payment Receipt *</label><input id="receipt" type="file" accept="image/*,.pdf" required><small style="color:#999">Upload a clear screenshot/photo or PDF of your PalmPay transfer receipt (max 5MB).</small></div><div class="field"><label>Additional Note</label><textarea id="note"></textarea></div>
+<button class="btn" onclick="submitOrder()">Submit Booking & Payment Details</button><div id="bookingMsg"></div></div></div>
+
+<div id="admin" class="modal"><div class="box"><button class="btn secondary" onclick="closeModal('admin')">Close</button><h2>Admin Dashboard</h2><div id="login"><div class="field"><label>Admin PIN</label><input id="pin" type="password"></div><button class="btn" onclick="adminLogin()">Login</button></div><div id="dash" style="display:none"><button class="btn secondary" onclick="loadOrders()">Refresh</button><div id="orders"></div></div></div></div>
+<script>
+const P={Regular:200000,Silver:325000,Gold:420000,Platinum:510000,Diamond:1405000};
+const F={
+Regular:["1 Photographer + 1 Videographer",'2 Normal Frames (12x16")',"Over 10 high-end edited pictures","Edited pictures for both Trad and White (grading)","Wedding videos and pictures on flash"],
+Silver:["Pre-wedding photos","1 Photographer + 1 Videographer","Two 16x20 frameless prints","10x12 photobook","Wedding thriller for both Trad and White","20 edited pictures for both Trad and White","Wedding videos and pictures on flash"],
+Gold:["Pre-wedding photos and thriller","2 Photographers + 2 Videographers","Bridal shower coverage","Drone pilot","Two 16x20 frameless prints","Big photobook (12x12) with case","Wedding thriller for both Trad and White","Over 35 edited pictures for both Trad and White","Wedding videos and pictures on flash"],
+Platinum:["Everything in Gold, plus —","2-person content crew","Two 16x20 frameless glass prints"],
+Diamond:["Everything in Platinum, plus —","Live stream of the event"]
+};
+let selectedPackage="", adminPin="";
+function naira(n){return "₦"+Number(n).toLocaleString("en-NG")}
+function render(){packages.innerHTML=Object.entries(P).map(([n,p])=>`<div class="card"><h2>${n}</h2><div class="sub">${n==="Regular"?"Essentials, done beautifully":n==="Silver"?"The full-day story":n==="Gold"?"Two teams, every angle":n==="Platinum"?"Cinematic content, glass-framed":"Nothing held back"}</div><div class="price">${naira(p)}</div><ul class="features">${F[n].map(x=>`<li>${x}</li>`).join("")}</ul><button class="btn" onclick="book('${n}')">Choose ${n}</button></div>`).join("")}
+function book(n){selectedPackage=n;selected.innerHTML=`<p><b>${n}</b> — ${naira(P[n])}</p>`;booking.classList.add("show")}
+function closeModal(id){document.getElementById(id).classList.remove("show")}
+async function submitOrder(){
+ const file = receipt.files[0];
+ if(!file){bookingMsg.innerHTML='<p style="color:#e88">Please upload your payment receipt.</p>';return}
+ const body=new FormData();
+ body.append("client_name",name.value); body.append("phone",phone.value); body.append("email",email.value);
+ body.append("event_date",date.value); body.append("location",location.value); body.append("package_name",selectedPackage);
+ body.append("payment_amount",paid.value); body.append("payment_date",paydate.value); body.append("payment_note",note.value);
+ body.append("payment_receipt",file);
+ bookingMsg.innerHTML="";
+ const r=await fetch("/api/orders",{method:"POST",body});const d=await r.json();
+ if(!r.ok){bookingMsg.innerHTML=`<p style="color:#e88">${d.error}</p>`;return}
+ bookingMsg.innerHTML=`<div class="success"><h3>Booking Submitted</h3><p>Your booking reference is <b>CLISH-${d.order_id}</b>.</p><p>Payment is pending verification. A confirmed receipt will only be available after Clish Photos verifies the transfer.</p></div>`;
+}
+function openAdmin(){admin.classList.add("show")}
+async function adminLogin(){const r=await fetch("/api/admin/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({pin:pin.value})});if(!r.ok){alert("Invalid PIN");return}adminPin=pin.value;login.style.display="none";dash.style.display="block";loadOrders()}
+async function loadOrders(){const r=await fetch("/api/admin/orders",{headers:{"x-admin-pin":adminPin}});const rows=await r.json();orders.innerHTML=rows.map(o=>`<div class="card" style="margin:12px 0"><b>${o.client_name}</b> — ${o.package_name} — ${naira(o.amount)}<br><small>${o.phone} · ${o.event_date} · ${o.location}</small><p>Status: <b>${o.status}</b><br>Payment: ${o.payment_amount?naira(o.payment_amount):"—"}<br>${o.payment_receipt?`<button class="btn secondary" onclick="viewUploadedReceipt(${o.id})">View uploaded receipt</button>`:"No receipt uploaded"}</p>${o.status==="pending"?`<button class="btn" onclick="confirmOrder(${o.id})">Confirm Payment & Generate Receipt</button> <button class="btn secondary" onclick="rejectOrder(${o.id})">Reject</button>`:o.status==="confirmed"?`<button class="btn" onclick="viewReceipt(${o.id})">View Receipt</button>`:""}</div>`).join("")||"<p>No bookings yet.</p>"}
+async function confirmOrder(id){await fetch("/api/admin/orders/"+id+"/confirm",{method:"POST",headers:{"x-admin-pin":adminPin}});loadOrders()}
+async function rejectOrder(id){await fetch("/api/admin/orders/"+id+"/reject",{method:"POST",headers:{"x-admin-pin":adminPin}});loadOrders()}
+async function viewUploadedReceipt(id){const r=await fetch(`/api/admin/orders/${id}/receipt-url`,{headers:{"x-admin-pin":adminPin}});const d=await r.json();if(!r.ok){alert(d.error||"Unable to load receipt.");return}window.open(d.url,"_blank")}
+async function viewReceipt(id){const r=await fetch("/api/orders/"+id);const o=await r.json();const w=window.open("","_blank");w.document.write(`<html><head><title>${o.receipt_no}</title><style>body{font-family:Arial;padding:40px}.receipt{max-width:700px;margin:auto}table{width:100%;border-collapse:collapse}td{padding:10px;border-bottom:1px solid #ddd}</style></head><body><div class="receipt"><h1>Clish Photos</h1><p>Official Payment Receipt</p><hr><p><b>Receipt No:</b> ${o.receipt_no}</p><table><tr><td>Client</td><td>${o.client_name}</td></tr><tr><td>Package</td><td>${o.package_name}</td></tr><tr><td>Event Date</td><td>${o.event_date}</td></tr><tr><td>Event Location</td><td>${o.location}</td></tr><tr><td>Amount</td><td>${naira(o.amount)}</td></tr><tr><td>Status</td><td>CONFIRMED</td></tr><tr><td>Confirmed</td><td>${new Date(o.confirmed_at).toLocaleString()}</td></tr></table><p style="margin-top:30px">Thank you for choosing Clish Photos.</p></div><script>window.print()<\/script></body></html>`);w.document.close()}
+render();
+</script>
+</body></html>
