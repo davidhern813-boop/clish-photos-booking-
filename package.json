@@ -1,14 +1,12 @@
 {
   "name": "clish-photos-booking-system",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
     "express": "^5.1.0",
-    "pg": "^8.16.3",
-    "multer": "^2.0.2",
-    "@supabase/supabase-js": "^2.45.4"
+    "pg": "^8.16.3"
   }
 }
